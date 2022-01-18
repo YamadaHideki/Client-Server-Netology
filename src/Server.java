@@ -8,6 +8,8 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) throws IOException {
         int port = 8080;
+        String clientName = null;
+        boolean clientIsChild = false;
 
         while (true) {
             ServerSocket serverSocket = new ServerSocket(port);
@@ -15,9 +17,21 @@ public class Server {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            System.out.println("New connection accepted");
-            final String name = in.readLine();
-            System.out.println(String.format("Hi %s, your port is %d", name, clientSocket.getPort()));
+            out.println("Write your name");
+            clientName = in.readLine();
+            out.println("Are u child? (yes/no)");
+            String childYesOrNo = in.readLine();
+
+            if(childYesOrNo.equals("yes")) {
+                clientIsChild = true;
+                out.println(String.format("Welcome to the kids area, %s! Let's play!", clientName));
+            } else if (childYesOrNo.equals("no")) {
+                clientIsChild = false;
+                out.println(String.format("Welcome to the adult zone, %s! Have a good rest, or a good working day!", clientName));
+            } else {
+                out.println("Good bye!");
+            }
+
             serverSocket.close();
         }
     }
